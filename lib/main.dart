@@ -1,16 +1,8 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 
 void main(){
-
-  // FloatingActionButton(
-  //   child: Icon(Icons.add),
-  //   elevation: 0,
-  //   backgroundColor: Colors.indigo,
-  //   tooltip: "ADD",
-  //   onPressed: (){
-  //     print("FAB");
-  //   },
-  // )
 
   runApp(
     MaterialApp(
@@ -21,100 +13,217 @@ void main(){
 
 
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
+  MyApp({Key? key}) : super(key: key);
 
-  int count = 0;
+  @override
+  State<MyApp> createState() {
+    return  _MyAppState();
+  }
+}
+
+class _MyAppState extends State<MyApp> {
+  int count = 0 ;
+
+
+  @override
+  void initState() {
+    super.initState();
+    print("initState");
+  }
+
+
+  @override
+  void dispose() {
+    super.dispose();
+    print("dispose");
+  }
+
+
+  bool checkBoxValue = false;
 
   @override
   Widget build(BuildContext context) {
+    print("build");
+    // double width = MediaQuery.of(context).size.width;
+    // double height = MediaQuery.of(context).size.height;
+    //
+    // print("W : $width");
+    // print("H : $height");
 
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("This is app bar"),
+        centerTitle: true,
+        actions: [
+          IconButton(
+            onPressed: (){},
+            icon: Icon(Icons.add),
+          ),
+        ],
+      ),
+      drawer: Drawer(
+        child: Column(
+          children: [
+            DrawerHeader(
+              padding: EdgeInsets.zero,
+              child: Container(
+                color: Colors.green,
+              ),
+            ),
+            ListTile(
+              title: Text("Title"),
+              subtitle: Text("Sub Title"),
+              leading: Icon(Icons.supervised_user_circle),
+              trailing: Icon(Icons.more_horiz_rounded),
+              onTap: (){},
+            ),
+          ],
+        ),
+      ),
+      body: Column(
+        children: [
+          Container(),
+          Expanded(
+            child: Container(
+              color: Colors.green,
+              alignment: Alignment.center,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text("Number is : $count",
+                    style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 22),
+                  ),
+                  SizedBox(height: 10,),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Checkbox(
+                        value: checkBoxValue,
+                        onChanged: (value) {
+                          setState(() {
+                            checkBoxValue = value ?? checkBoxValue;
+                          });
+                        },
+                      ),
+                      Text("Check box")
+                    ],
+                  ),
+                  SizedBox(height: 10,),
+                  MyCustomButton(
+                    label: "Plus",
+                    onClicked: (){
+                      setState(() {
+                        count++;
+                        print(count);
+                      });
+                    },
+                  ),
+                  SizedBox(height: 10,),
+                  Stack(
+                    clipBehavior: Clip.none,
+                    children: [
+                      Container(
+                        width: 100,
+                        height: 100,
+                        color: Colors.deepOrange,
+                      ),
+                      Positioned(
+                        bottom: -30,
+                        left: -30,
+                        child: Container(
+                          width: 100,
+                          height: 100,
+                          color: Colors.lightGreenAccent,
+                        ),
+                      ),
+                    ],
+                  )
 
-
-     return Scaffold(
-       appBar: AppBar(
-         backgroundColor: Colors.green,
-         title: const Text("Welcome..."),
-         centerTitle: true,
-         leading: Icon(Icons.arrow_back),
-         actions: [
-           IconButton(
-             onPressed: (){},
-             icon: Icon(Icons.ac_unit),
-           ),
-           IconButton(
-             onPressed: (){},
-             icon: Icon(Icons.ac_unit),
-           )
-         ],
-       ),
-       // floatingActionButton: GestureDetector(
-       //   onTap: ()=> print("FAB Clicked !"),
-       //   child: Container(
-       //     height: 70,
-       //     width: 70,
-       //     decoration: BoxDecoration(
-       //       color: Colors.indigo,
-       //       borderRadius: BorderRadius.circular(35)
-       //     ),
-       //     child: Icon(Icons.add, color: Colors.white, size: 32),
-       //   ),
-       // ),
-       body: Column(
-         mainAxisAlignment: MainAxisAlignment.center,
-         crossAxisAlignment: CrossAxisAlignment.center,
-         children: [
-           Container(),
-           Row(
-             children: [
-               Expanded(
-                 child: Padding(
-                   padding: EdgeInsets.all(10),
-                   child: Container(
-                     height: 100,
-                     color: Colors.green,
-                   ),
-                 ),
-               ),
-               Expanded(
-                 child: Container(
-                   height: 100,
-                   color: Colors.amber,
-                 ),
-               ),
-             ],
-           ),
-           Row(
-             children: [
-               Container(
-                 height: 100,
-                 width: 200,
-                 color: Colors.purpleAccent,
-               ),
-               Container(
-                 height: 100,
-                 width: 200,
-                 color: Colors.lime,
-               ),
-             ],
-           ),
-           // SizedBox(height: 10,),
-           Text(count.toString()),
-           MyCustomButton(
-               label: "Hi",
-               onClicked: (){
-                 count++;
-                 print(count);
-               }),
-           // IconButton(
-           //   onPressed: (){},
-           //   icon: Icon(Icons.ac_unit),
-           // )
-         ],
-       ),
-     );
+                ],
+              ),
+            ),
+          ),
+          Expanded(
+            child: Container(
+              color: Colors.blue,
+              alignment: Alignment.center,
+              child: Row(
+                children: [
+                  Expanded(
+                      child: Container(
+                        color: Colors.purpleAccent,
+                        padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                        child: Column(
+                          children: [
+                            Expanded(
+                                flex: 2,
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    color: Colors.grey,
+                                    borderRadius: BorderRadius.circular(15),
+                                    border: Border.all(color: Colors.white),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.white.withOpacity(0.5),
+                                        blurRadius: 5,
+                                        spreadRadius: 5,
+                                        offset: Offset(-5, 5)
+                                      )
+                                    ]
+                                  ),
+                                ),
+                            ),
+                            SizedBox(height: 10,),
+                            Expanded(
+                                flex: 3,
+                                child: Container(color: Colors.indigoAccent)
+                            ),
+                          ],
+                        ),
+                      ),
+                  ),
+                  Expanded(
+                      child: SingleChildScrollView(
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 20),
+                          child: Column(
+                            children: [
+                              Container(height: 40, color: Colors.white,),
+                              SizedBox(height: 10,),
+                              Container(height: 40, color: Colors.white,),
+                              SizedBox(height: 10,),
+                              Container(height: 40, color: Colors.white,),
+                              SizedBox(height: 10,),
+                              Container(height: 40, color: Colors.white,),
+                              SizedBox(height: 10,),
+                              Container(height: 40, color: Colors.white,),
+                              SizedBox(height: 10,),
+                              Container(height: 40, color: Colors.white,),
+                              SizedBox(height: 10,),
+                              Container(height: 40, color: Colors.white,),
+                              SizedBox(height: 10,),
+                              Container(height: 40, color: Colors.white,),
+                              SizedBox(height: 10,),
+                              Container(height: 40, color: Colors.white,),
+                              SizedBox(height: 10,),
+                              Container(height: 40, color: Colors.white,),
+                              SizedBox(height: 10,),
+                            ],
+                          ),
+                        ),
+                      ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
-
 }
+
 
 
 typedef MyFunc = void Function()?;
@@ -126,42 +235,18 @@ class MyCustomButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onClicked,
-      child: Ink(
-        width: 100,
-        height: 50,
-        color: Colors.indigoAccent,
-        child: Center(child: Text(label, style: TextStyle(color: Colors.white, fontSize: 18) ,)),
+    return Material(
+      child: InkWell(
+        onTap: onClicked,
+        child: Ink(
+          width: 100,
+          height: 50,
+          color: Colors.white,
+          child: Center(child: Text(label, style: TextStyle(color: Colors.black, fontSize: 18) ,)),
+        ),
       ),
     );
   }
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-typedef M = void Function(int pages);
-
-
-
-class Book {
-  String name;
-  String author;
-
-  M read;
-
-  Book(this.name, this.author, this.read);
 }
 
 
