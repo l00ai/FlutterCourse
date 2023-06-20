@@ -1,185 +1,202 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_svg/svg.dart';
+import 'package:my_applecation/details_screen.dart';
+import 'package:my_applecation/profile_screen.dart';
+import 'package:my_applecation/unknown_screen.dart';
 
-void main() => runApp(
-    MaterialApp(
-      title: "Tutorial",
-      home: MyPage(),
-    ),
-);
+void main() {
+  runApp(MyApp());
+}
 
-class MainScreen extends StatelessWidget {
-  const MainScreen({Key? key}) : super(key: key);
+class MyApp extends StatelessWidget {
+  const MyApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("SVG"),
-      ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          const Center(),
-          SvgPicture.asset(
-              "assets/vectors/light.svg",
-              semanticsLabel: 'Acme Logo',
-            height: 100,
-          )
-        ],
-      ),
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      initialRoute: HomeScreen.route,
+      routes: {
+        HomeScreen.route : (context)=> HomeScreen(),
+        "/details" : (context)=> DetailsScreen(name: "name",),
+        "/profile" : (context) => ProfileScreen(),
+        "/unKnown" : (context) => UnknownScreen(),
+      },
+      onGenerateRoute: (settings) {
+        // handel '/'
+        if(settings.name == '/'){
+          return MaterialPageRoute(builder: (context) => HomeScreen(),);
+        }
+
+        // handel => 'profile/:name
+
+        final uri = Uri.parse(settings.name ?? "");
+
+        if(uri.pathSegments.length == 2 && uri.pathSegments.first == "details"){
+          String name = uri.pathSegments[1];
+          return MaterialPageRoute(builder: (context) => DetailsScreen(name: name),);
+        }
+
+        return MaterialPageRoute(builder: (context) => UnknownScreen(),);
+
+      },
+      // home: HomeScreen(),
     );
   }
 }
 
+class HomeScreen extends StatelessWidget {
+  const HomeScreen({Key? key}) : super(key: key);
 
-
-
-class MyPage extends StatefulWidget {
-  @override
-  _MyPageState createState() => _MyPageState();
-}
-
-class _MyPageState extends State<MyPage> {
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  TextEditingController ageController = TextEditingController();
-
-  late TextEditingController nameController ;
-
-  @override
-  void initState() {
-    nameController = TextEditingController();
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    nameController.dispose();
-    super.dispose();
-  }
-
+  static const route = "/";
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Basic form"),
-      ),
-      body: Form(
-        key: _formKey,
-        child: ListView(
-          padding: const EdgeInsets.all(10.0),
-          children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: TextFormField(
-                controller: nameController,
-                enabled: true,
-                // obscureText: true,
-                keyboardType: TextInputType.text,
-                //textInputAction: TextInputAction.newline,
-                //maxLines: 4,
-                maxLength: 10,
-                validator: (value){
-                  if(value != null && value.isEmpty){
-                    return "Enter user name!";
-                  }
-                  return null;
-                },
-                inputFormatters: [
-                  FilteringTextInputFormatter.digitsOnly,
-                ],
-                onChanged: (value) => _formKey.currentState!.validate(),
-                decoration: const InputDecoration(
-                  labelText: 'UserName',
-                  prefixIcon: Icon(Icons.person),
-                  suffixIcon: Icon(
-                    Icons.delete_outline,
-                    color: Colors.red,
-                  ),
-                   counterText: "",
-                   hintText: "Please enter username ...",
-                  // border: OutlineInputBorder(
-                  //   borderRadius: BorderRadius.all(Radius.circular(20.0)),
-                  //   borderSide: BorderSide(color: Colors.black, width: 2.0),
-                  // ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(20.0)),
-                    borderSide: BorderSide(color: Colors.black, width: 2.0),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(20.0)),
-                    borderSide: BorderSide(color: Colors.blue, width: 2.0),
-                  ),
-                  errorBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(20.0)),
-                    borderSide: BorderSide(color: Colors.red, width: 2.0),
-                  ),
-                  focusedErrorBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(20.0)),
-                    borderSide:
-                        BorderSide(color: Colors.deepOrangeAccent, width: 2.0),
-                  ),
-                ),
+    return WillPopScope(
+      onWillPop: () {
+        return Future.value(true);
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text("Home"),
+        ),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              TextButton(
+                onPressed: () async {
+                  final result = await Navigator.push<List<Map>>(context, MaterialPageRoute(builder: (context)=> DetailsScreen(name: "Loai")));
+
+                  print(result![0]['name']);
+                  },
+                child: const Text("Open Details Screen"),
               ),
-            ),
-            // Padding(
-            //   padding: const EdgeInsets.all(10.0),
-            //   child: TextFormField(
-            //     controller: ageController,
-            //     validator: (value) {
-            //       if (value!.isEmpty) {
-            //         return 'Please enter age';
-            //       }
-            //       return null;
-            //     },
-            //     keyboardType: TextInputType.number,
-            //     style: TextStyle(
-            //       fontSize: 13,
-            //     ),
-            //     decoration: const InputDecoration(
-            //       labelText: 'Age',
-            //       hintText: "20",
-            //       prefixIcon: Icon(Icons.date_range),
-            //       suffixIcon: Icon(
-            //         Icons.delete_outline,
-            //         color: Colors.red,
-            //       ),
-            //       enabledBorder: OutlineInputBorder(
-            //         borderRadius: BorderRadius.all(Radius.circular(20.0)),
-            //         borderSide: BorderSide(color: Colors.black, width: 2.0),
-            //       ),
-            //       focusedBorder: OutlineInputBorder(
-            //         borderRadius: BorderRadius.all(Radius.circular(20.0)),
-            //         borderSide: BorderSide(color: Colors.blue, width: 2.0),
-            //       ),
-            //       errorBorder: OutlineInputBorder(
-            //         borderRadius: BorderRadius.all(Radius.circular(20.0)),
-            //         borderSide: BorderSide(color: Colors.red, width: 2.0),
-            //       ),
-            //       focusedErrorBorder: OutlineInputBorder(
-            //         borderRadius: BorderRadius.all(Radius.circular(20.0)),
-            //         borderSide:
-            //             BorderSide(color: Colors.deepOrangeAccent, width: 2.0),
-            //       ),
-            //     ),
-            //   ),
-            // ),
-            MaterialButton(
-              color: Colors.grey,
-              onPressed: () {
-                if (_formKey.currentState!.validate()) {
-                  debugPrint("Name is ${nameController.text}");
-                  debugPrint("Age is ${ageController.text}");
-                }
-              },
-              child: Text("Submit"),
-            ),
-          ],
+              TextButton(
+                  onPressed: () {
+                    Navigator.pushNamed(context, '/details/loai');
+                    // Navigator.push(context, MaterialPageRoute(builder: (context)=> ProfileScreen()));
+                  },
+                  child: const Text("Open Profile Screen")),
+              TextButton(onPressed: () {}, child: const Text("UnKnown Screen"))
+            ],
+          ),
         ),
       ),
     );
   }
 }
+
+//
+//
+//
+// class Nav2App extends StatelessWidget {
+//   @override
+//   Widget build(BuildContext context) {
+//     return MaterialApp(
+//       initialRoute: HomeScreen.route,
+//       routes: {
+//         HomeScreen.route: (context) => const HomeScreen(),
+//         DetailScreen.route: (context)=> DetailScreen(id: "-1",),
+//         UnknownScreen.route: (context)=> const UnknownScreen(),
+//       },
+//       onGenerateRoute: (settings) {
+//         // Handel => '/'
+//         if(settings.name == '/'){
+//           return MaterialPageRoute(builder: (context) => const HomeScreen(),);
+//         }
+//
+//         // Handel => '/details/:id'
+//         final uri = Uri.parse(settings.name!);
+//         if(uri.pathSegments.length == 2 && uri.pathSegments.first == 'details'){
+//           final id = uri.pathSegments[1];
+//           return MaterialPageRoute(builder: (context) => DetailScreen(id: id),);
+//         }
+//
+//         return MaterialPageRoute(builder: (context) => const UnknownScreen(),);
+//
+//       },
+//     );
+//   }
+// }
+//
+// class HomeScreen extends StatelessWidget {
+//   const HomeScreen({super.key});
+//
+//   static const String route = '/';
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(),
+//       body: Column(
+//         mainAxisAlignment: MainAxisAlignment.center,
+//         children: [
+//           Container(),
+//           TextButton(
+//             child: const Text('View Details'),
+//             onPressed: () {
+//               Navigator.pushNamed(
+//                 context,
+//                 '/details/1',
+//               );
+//             },
+//           ),
+//           const SizedBox(height: 10,),
+//           TextButton(
+//             child: const Text('View Unknown Screen'),
+//             onPressed: () {
+//               Navigator.pushNamed(
+//                 context,
+//                 '/unknownScreen',
+//               );
+//             },
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+// }
+//
+// class DetailScreen extends StatelessWidget {
+//   String id;
+//   DetailScreen({super.key, required this.id,});
+//
+//   static const String route = '/unknownScreen';
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(),
+//       body: Center(
+//         child: Column(
+//           mainAxisAlignment: MainAxisAlignment.center,
+//           children: [
+//             Text('Viewing details for item $id'),
+//             TextButton(
+//               child: const Text('Pop!'),
+//               onPressed: () {
+//                 Navigator.pop(context);
+//               },
+//             ),
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+// }
+//
+// class UnknownScreen extends StatelessWidget {
+//   const UnknownScreen({super.key});
+//
+//   static const String route = '/unknownScreen';
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(),
+//       body: const Center(
+//         child: Text('404!'),
+//       ),
+//     );
+//   }
+// }
