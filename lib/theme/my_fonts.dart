@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class MyFonts
 {
   // return the right font depending on app language
-  static TextStyle get getAppFontType => const TextStyle(fontFamily: 'Cairo');
+  static TextStyle get getAppFontType => const TextStyle(fontFamily: 'LamaSans');
   // headlines text font
   static TextStyle get displayTextStyle => getAppFontType;
 

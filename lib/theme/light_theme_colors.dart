@@ -3,12 +3,12 @@ import 'package:flutter/material.dart';
 class LightColors
 {
   //dark swatch
-  static const Color primaryColor = Color(0xFF42A7DE);
-  static const Color accentColor = Color(0xFFF69D1E);
+  static const Color primaryColor = Color(0xFF001D6E);
+  static const Color accentColor = Color(0xFF25AAE1);
   static const Color gryColor = Color(0xFFF4F4F4);
 
   //APPBAR
-  static const Color appBarColor = primaryColor;
+  static const Color appBarColor = Colors.white;
 
   //SCAFFOLD
   static const Color scaffoldBackgroundColor = Colors.white;
@@ -24,7 +24,7 @@ class LightColors
 
   //ICONS
   static const Color appBarIconsColor = Color(0xff333333);
-  static const Color iconColor = Colors.black;
+  static const Color iconColor = accentColor;
 
   //BUTTON
   static const Color buttonColor = primaryColor;
