@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:my_applecation/counter.dart';
 
 class DetailsPage extends StatelessWidget {
 
@@ -8,12 +7,11 @@ class DetailsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    final counter = Counter.of(context);
 
     return Scaffold(
       body: Center(
         child: Text(
-          "${counter.count }"
+          ""
         ),
       ),
     );

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:my_applecation/counter.dart';
 import 'package:my_applecation/theme/my_theme.dart';
 import 'my_shared_perf.dart';
 import 'pages/home_page.dart';
@@ -20,14 +19,11 @@ class MyApp extends StatelessWidget {
     final size = MediaQuery.of(context);
     final theme = Theme.of(context);
 
-    return Counter(
-      count: -1,
-      child: MaterialApp(
+    return MaterialApp(
           debugShowCheckedModeBanner: false,
           theme: MyTheme.getThemeData(isLight: true),
           home: HomePage(),
-        ),
-    );
+        );
   }
 }
 

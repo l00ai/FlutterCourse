@@ -1,5 +1,5 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:my_applecation/counter.dart';
 import 'package:my_applecation/network/api_helper.dart';
 
 import 'details_page.dart';
@@ -21,9 +21,40 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+
+
+  Map? data ;
+  bool isLoading = false;
+
+
+  getData() async {
+    isLoading = true;
+    final result = await ApiHelper().apiRequest(
+        url: "posts",
+        body: {"username" : "l00ai"},
+        type: HttpType.post,
+    );
+    isLoading = false;
+
+    if(result != null){
+      setState(() {
+        data = result;
+      });
+    }else{
+      setState(() {
+        data = {"msg":"error"};
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    getData();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
-    Counter counter = Counter.of(context);
     return Scaffold(
       appBar: AppBar(
         title: Text("Counter app"),
@@ -32,17 +63,16 @@ class _HomeScreenState extends State<HomeScreen> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Viewer(),
+
+          if(isLoading)
+            const CupertinoActivityIndicator()
+          else
+            Center(child: Text(data.toString())),
+
           const SizedBox(
             height: 25,
           ),
-          ElevatedButton(
-              onPressed: () {
-                setState(() {
-                  counter.count++;
-                });
-              },
-              child: Text("+")),
+
           const SizedBox(
             height: 25,
           ),
@@ -59,16 +89,3 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
-class Viewer extends StatelessWidget {
-  const Viewer({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    Counter counter = Counter.of(context);
-    return Center(
-        child: Text(
-      "${counter.count}",
-      style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-    ));
-  }
-}
