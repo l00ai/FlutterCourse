@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:my_applecation/providers/timer_provider.dart';
 import 'package:my_applecation/theme/my_theme.dart';
+import 'package:provider/provider.dart';
 import 'my_shared_perf.dart';
 import 'pages/home_page.dart';
 
@@ -19,11 +21,16 @@ class MyApp extends StatelessWidget {
     final size = MediaQuery.of(context);
     final theme = Theme.of(context);
 
-    return MaterialApp(
-          debugShowCheckedModeBanner: false,
-          theme: MyTheme.getThemeData(isLight: true),
-          home: HomePage(),
-        );
+    return ChangeNotifierProvider(
+      create: (_)=> TimerProvider(),
+      child: MaterialApp(
+            debugShowCheckedModeBanner: false,
+            theme: MyTheme.getThemeData(isLight: true),
+            home: HomePage(),
+
+          ),
+    );
   }
 }
+
 

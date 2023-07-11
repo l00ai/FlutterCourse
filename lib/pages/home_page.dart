@@ -1,7 +1,8 @@
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-import 'package:my_applecation/network/api_helper.dart';
+import 'dart:async';
 
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../providers/timer_provider.dart';
 import 'details_page.dart';
 
 class HomePage extends StatelessWidget {
@@ -21,71 +22,86 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-
-
-  Map? data ;
-  bool isLoading = false;
-
-
-  getData() async {
-    isLoading = true;
-    final result = await ApiHelper().apiRequest(
-        url: "posts",
-        body: {"username" : "l00ai"},
-        type: HttpType.post,
-    );
-    isLoading = false;
-
-    if(result != null){
-      setState(() {
-        data = result;
-      });
-    }else{
-      setState(() {
-        data = {"msg":"error"};
-      });
-    }
-  }
+  late TextEditingController textEditingController;
 
   @override
   void initState() {
-    getData();
+    textEditingController = TextEditingController();
+    startTimer();
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    textEditingController.dispose();
+    super.dispose();
+  }
+
+  startTimer() {
+    final timerProvider = Provider.of<TimerProvider>(context, listen: false);
+    // Timer
+    Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (timerProvider.count > 0) {
+        timerProvider.decrementCount();
+      } else {
+        timer.cancel();
+      }
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Counter app"),
+        title: const Text("Counter app"),
       ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
 
-          if(isLoading)
-            const CupertinoActivityIndicator()
-          else
-            Center(child: Text(data.toString())),
-
-          const SizedBox(
-            height: 25,
-          ),
-
-          const SizedBox(
-            height: 25,
-          ),
-          TextButton(
-              onPressed: () {
-                Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => DetailsPage(),
-                ));
+            Center(
+              child: Consumer<TimerProvider>(
+              builder: (context, value, child) {
+                return Text(
+                  "${value.count}",
+                  style: const TextStyle(fontSize: 32),
+                );
               },
-              child: Text("Open details page"))
-        ],
+            ),),
+          ],
+        ),
       ),
     );
   }
 }
 
+
+class ListViewBuild extends StatelessWidget {
+  const ListViewBuild({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: ListView(
+        children: [
+          ListTile(
+            leading: CircleAvatar(
+              backgroundColor: Colors.grey.shade400,
+              child: Text("A")
+            ),
+            title: Text("Title"),
+            trailing: Checkbox(
+              value: false,
+              onChanged: (value){
+
+              },
+            ),
+          )
+        ],
+      ),
+    );
+  }
+}
