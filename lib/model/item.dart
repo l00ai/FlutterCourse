@@ -4,8 +4,9 @@ class Item {
 
   Item({required this.title, this.checked = false});
 
-  toggleChecked(){
+  bool toggleChecked(){
     checked = !checked;
+    return checked;
   }
 
 }

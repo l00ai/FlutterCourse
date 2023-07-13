@@ -35,6 +35,17 @@ class _HomeScreenState extends State<HomeScreen> {
     super.dispose();
   }
 
+  onAddButtonPressed() {
+    String text = textEditingController.text;
+    if(text.isEmpty){
+      return;
+    }
+    final item = Item(title: text);
+    final provider = Provider.of<ItemProvider>(context, listen: false);
+    provider.addItem(item);
+    textEditingController.clear();
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -42,39 +53,58 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: AppBar(
         title: const Text("ToDo App"),
       ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            TextField(
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: TextField(
               controller: textEditingController,
               decoration: const InputDecoration(label: Text("Enter your task")),
             ),
-            const SizedBox(
-              height: 10,
-            ),
-            ElevatedButton(
-                onPressed: () {
-                  String text = textEditingController.text;
-                  final item = Item(title: text);
-                  final provider = Provider.of<ItemProvider>(context, listen: false);
-                  provider.addItem(item);
-                  textEditingController.clear();
-                },
+          ),
+          const SizedBox(
+            height: 10,
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: ElevatedButton(
+                onPressed: onAddButtonPressed,
                 child: const Text("Add"),
             ),
-            const SizedBox(
-              height: 20,
-            ),
-            ListViewBuild(),
-          ],
-        ),
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          TVCount(),
+          ListViewBuild(),
+
+        ],
       ),
     );
   }
 }
+
+
+class TVCount extends StatelessWidget {
+  const TVCount({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Selector<ItemProvider, int>(
+      selector: (_, itemProvider) => itemProvider.count,
+      builder: (context, value, child) {
+        print("Selector 1");
+        return Center(
+          child: Text("Done Tasks: $value"),
+        );
+      },
+    );
+
+  }
+}
+
 
 
 class ListViewBuild extends StatelessWidget {
@@ -85,13 +115,14 @@ class ListViewBuild extends StatelessWidget {
     return Expanded(
       child: Consumer<ItemProvider>(
         builder: (context, value, child) {
+          print("Consumer 1");
           final items = value.items;
           return ListView.builder(
             padding: EdgeInsets.zero,
-            itemCount: value.items.length,
+            itemCount: items.length,
             itemBuilder: (context, index) => GestureDetector(
               onLongPress: (){
-                value.deleteItem(index);
+                value.deleteItemByIndex(index);
               },
               child: ListTile(
                 leading: CircleAvatar(
