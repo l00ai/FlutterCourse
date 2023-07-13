@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:my_applecation/providers/timer_provider.dart';
+import 'package:my_applecation/providers/item_provider.dart';
 import 'package:my_applecation/theme/my_theme.dart';
 import 'package:provider/provider.dart';
 import 'my_shared_perf.dart';
@@ -7,9 +7,7 @@ import 'pages/home_page.dart';
 
 main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
   await MySharedPref().init();
-
   runApp(MyApp());
 }
 
@@ -22,7 +20,7 @@ class MyApp extends StatelessWidget {
     final theme = Theme.of(context);
 
     return ChangeNotifierProvider(
-      create: (_)=> TimerProvider(),
+      create: (context) => ItemProvider(),
       child: MaterialApp(
             debugShowCheckedModeBanner: false,
             theme: MyTheme.getThemeData(isLight: true),

@@ -1,9 +1,8 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
+import 'package:my_applecation/providers/item_provider.dart';
 import 'package:provider/provider.dart';
-import '../providers/timer_provider.dart';
-import 'details_page.dart';
+
+import '../model/item.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -27,7 +26,6 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     textEditingController = TextEditingController();
-    startTimer();
     super.initState();
   }
 
@@ -37,40 +35,40 @@ class _HomeScreenState extends State<HomeScreen> {
     super.dispose();
   }
 
-  startTimer() {
-    final timerProvider = Provider.of<TimerProvider>(context, listen: false);
-    // Timer
-    Timer.periodic(const Duration(seconds: 1), (timer) {
-      if (timerProvider.count > 0) {
-        timerProvider.decrementCount();
-      } else {
-        timer.cancel();
-      }
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Counter app"),
+        title: const Text("ToDo App"),
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [
-
-            Center(
-              child: Consumer<TimerProvider>(
-              builder: (context, value, child) {
-                return Text(
-                  "${value.count}",
-                  style: const TextStyle(fontSize: 32),
-                );
-              },
-            ),),
+            TextField(
+              controller: textEditingController,
+              decoration: const InputDecoration(label: Text("Enter your task")),
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            ElevatedButton(
+                onPressed: () {
+                  String text = textEditingController.text;
+                  final item = Item(title: text);
+                  final provider = Provider.of<ItemProvider>(context, listen: false);
+                  provider.addItem(item);
+                  textEditingController.clear();
+                },
+                child: const Text("Add"),
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+            ListViewBuild(),
           ],
         ),
       ),
@@ -85,22 +83,32 @@ class ListViewBuild extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Expanded(
-      child: ListView(
-        children: [
-          ListTile(
-            leading: CircleAvatar(
-              backgroundColor: Colors.grey.shade400,
-              child: Text("A")
-            ),
-            title: Text("Title"),
-            trailing: Checkbox(
-              value: false,
-              onChanged: (value){
-
+      child: Consumer<ItemProvider>(
+        builder: (context, value, child) {
+          final items = value.items;
+          return ListView.builder(
+            padding: EdgeInsets.zero,
+            itemCount: value.items.length,
+            itemBuilder: (context, index) => GestureDetector(
+              onLongPress: (){
+                value.deleteItem(index);
               },
+              child: ListTile(
+                leading: CircleAvatar(
+                    backgroundColor: Colors.grey.shade400,
+                    child: Text(items[index].title[0],)
+                ),
+                title: Text(items[index].title, style: items[index].checked ? TextStyle(decoration: TextDecoration.lineThrough) : null),
+                trailing: Checkbox(
+                  value: items[index].checked,
+                  onChanged: (_){
+                    value.toggle(index);
+                  },
+                ),
+              ),
             ),
-          )
-        ],
+          );
+        }
       ),
     );
   }
